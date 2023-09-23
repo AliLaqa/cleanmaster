@@ -1,8 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-
-import 'Profile.dart';
-import 'SettingsScreen.dart';
+import '../ProfileScreens/Profile.dart';
+import '../SettingsScreens/SettingsScreen.dart';
 import 'home.dart';
 
 class NavScreen extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:clean_master/screens/splash_screen/splash_screen.dart';
+import 'package:clean_master/screens/SplashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {

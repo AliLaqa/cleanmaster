@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../dashboard_screens/photo_management.dart';
+import '../PhotoManagementScreens/photo_management.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

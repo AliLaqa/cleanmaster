@@ -55,7 +55,9 @@ dependencies:
   #  To play Videos on a widget surface.
   video_player: ^2.7.2
   #  To pick Images from Files, this package is giving error when used with other packages.
-#  image_picker: ^1.0.4
+  image_picker: ^1.0.4
+  # To see images on full screen zooming in smoothly on-tap.
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:
