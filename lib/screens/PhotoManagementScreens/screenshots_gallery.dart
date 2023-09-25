@@ -1,3 +1,4 @@
+import 'package:clean_master/Helpers/RequestPermissionHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,9 +27,7 @@ class _ScreenshotsGalleryState extends State<ScreenshotsGallery> {
 
 
   Future<void> _loadPhotos() async {
-    final statusStorage = await Permission.storage.request();
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess && statusStorage.isGranted) {
+    if (permissionsGranted = true) {
       final albums = await PhotoManager.getAssetPathList(onlyAll: true);
       final recentAlbum = albums.first;
       final recentPhotos = await recentAlbum.getAssetListRange(
@@ -45,29 +44,12 @@ class _ScreenshotsGalleryState extends State<ScreenshotsGallery> {
 
       setState(() {
         _photos = imageAssets.toList();
-        _isLoading = false; // Mark loading as complete
+        // Mark loading as complete
+        _isLoading = false;
       });
     } else {
-      print("Permissions Denied---------------------------->");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Permissions Denied"),
-            content: Text("To use this app, please grant permission to access storage, photos, and videos in settings."),
-            actions: <Widget>[
-              TextButton(
-                child: Text("OK"),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  // Open app settings
-                  await openAppSettings();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      RequestPermission(context);
+      _loadPhotos();
     }
   }
 

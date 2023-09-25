@@ -1,3 +1,4 @@
+import 'package:clean_master/Helpers/RequestPermissionHelper.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -33,8 +34,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
 
   ///For Loading Image Files from Phone
   Future<void> _loadPhotos() async {
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess) {
+    if (permissionsGranted = true) {
       final albums = await PhotoManager.getAssetPathList(onlyAll: true);
       final recentAlbum = albums.first;
       final recentPhotos = await recentAlbum.getAssetListRange(
@@ -51,6 +51,9 @@ class _PhotoGalleryState extends State<PhotoGallery> {
         _photos = imageAssets.toList();
         _isLoading = false; // Mark loading as complete
       });
+    } else {
+      RequestPermission(context);
+      _loadPhotos();
     }
   }
 

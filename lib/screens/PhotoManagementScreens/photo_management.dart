@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:clean_master/Helpers/RequestPermissionHelper.dart';
 import 'package:clean_master/screens/PhotoManagementScreens/screenshots_gallery.dart';
 import 'package:clean_master/screens/PhotoManagementScreens/similar_photos.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:velocity_x/velocity_x.dart';
+import '../../Helpers/loadScreenshotHelper.dart';
 import '../../widgets/photo_buttons.dart';
 
 
@@ -18,101 +20,22 @@ class PhotoManagement extends StatefulWidget {
 }
 
 class _PhotoManagementState extends State<PhotoManagement> {
-  List<AssetEntity> _photos1 = [];
-  bool _isLoading = true; // Add loading state
+
 
   @override
   void initState() {
     super.initState();
-    _loadPhotos1();
+    LoadScreenshots();
   }
 
-  Future<void> _loadPhotos1() async {
-    final statusStorage = await Permission.storage.request();
-      final result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess && statusStorage.isGranted) {
-      final albums = await PhotoManager.getAssetPathList(onlyAll: true);
-      final recentAlbum = albums.first;
-      final recentPhotos = await recentAlbum.getAssetListRange(
-        start: 0,
-        end: await recentAlbum.assetCountAsync,
-      );
+  Future<void> LoadScreenshots() async {
+    final loadedScreenshots = await loadingScreenshots();
 
-      // Filter out non-image assets
-      final imageAssets = recentPhotos.where((asset) =>
-      // asset.type == AssetType.image &&
-      //     asset.mimeType!.startsWith('image/'));
-      asset.mimeType!.startsWith('image/') &&
-          asset.title?.toLowerCase().contains('screenshot') == true);
-
-      setState(() {
-        _photos1 = imageAssets.toList();
-        _isLoading = false; // Mark loading as complete
-      });
-    } else {
-      print("Permissions Denied---------------------------->");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Permissions Denied"),
-            content: Text("To use this app, please grant permission to access storage, photos, and videos in settings."),
-            actions: <Widget>[
-              TextButton(
-                child: Text("OK"),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  // Open app settings
-                  await openAppSettings();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+    setState(() {
+      screenShots = loadedScreenshots;
+      isLoading = false;
+    });
   }
-  // List<AssetEntity> screenshotImages = [];
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _requestStoragePermission();
-  //   _loadScreenshotImages();
-  // }
-  // Future<void> _requestStoragePermission() async {
-  //   final status = await Permission.storage.request();
-  //   if (status.isGranted) {
-  //     // Permission granted, proceed with loading images
-  //     _loadScreenshotImages();
-  //   } else {
-  //     // Handle the case where permission is denied
-  //     print('Storage permission denied');
-  //   }
-  // }
-  // Future<void> _loadScreenshotImages() async {
-  //   final albums = await PhotoManager.getAssetPathList(onlyAll: true);
-  //   AssetPathEntity? screenshots;
-  //
-  //   for (final album in albums) {
-  //     if (album.name == 'Screenshots') {
-  //       screenshots = album;
-  //       break;
-  //     }
-  //   }
-  //
-  //   if (screenshots != null) {
-  //     final assets = await screenshots.getAssetListRange(start: 0, end: 100); // Adjust the end value as needed
-  //     setState(() {
-  //       screenshotImages = assets;
-  //     });
-  //   } else {
-  //     // Handle the case where the 'Screenshots' album is not found
-  //     print('Screenshots album not found');
-  //   }
-  // }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -286,14 +209,14 @@ class _PhotoManagementState extends State<PhotoManagement> {
                                   child: Container(
                                     height:120,
                                     child: MasonryGridView.builder(
-                                      itemCount: _photos1.length,
+                                      itemCount: screenShots.length,
                                       scrollDirection: Axis.horizontal,
                                       gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 1,
                                       ),
                                       itemBuilder: (context, index) {
                                         return FutureBuilder<File?>(
-                                          future: _photos1[index].file,
+                                          future: screenShots[index].file,
                                           builder: (context, snapshot) {
                                             if (
                                             snapshot.hasData) {
