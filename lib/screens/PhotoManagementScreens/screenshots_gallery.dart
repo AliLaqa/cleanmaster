@@ -6,14 +6,14 @@ import 'dart:io';
 
 import 'full_Image.dart';
 
-class PhotoGallery extends StatefulWidget {
-  const PhotoGallery({Key? key}) : super(key: key);
+class ScreenshotsGallery extends StatefulWidget {
+  const ScreenshotsGallery({Key? key}) : super(key: key);
 
   @override
-  _PhotoGalleryState createState() => _PhotoGalleryState();
+  _ScreenshotsGalleryState createState() => _ScreenshotsGalleryState();
 }
 
-class _PhotoGalleryState extends State<PhotoGallery> {
+class _ScreenshotsGalleryState extends State<ScreenshotsGallery> {
   List<AssetEntity> _photos = [];
   bool _isLoading = true; // Add loading state
 

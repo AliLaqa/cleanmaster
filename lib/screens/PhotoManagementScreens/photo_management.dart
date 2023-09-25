@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:clean_master/screens/PhotoManagementScreens/photo_gallery.dart';
+import 'package:clean_master/screens/PhotoManagementScreens/screenshots_gallery.dart';
 import 'package:clean_master/screens/PhotoManagementScreens/similar_photos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -152,7 +152,8 @@ class _PhotoManagementState extends State<PhotoManagement> {
                                 // 140.widthBox,
                                 Spacer(),
                                 IconButton(onPressed: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DuplicateImagesFinder()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                      PhotoGallery()));
                                 }, icon: Icon(Icons.arrow_forward_ios,color: Colors.black38,))
                               ],
                             ),
@@ -249,7 +250,7 @@ class _PhotoManagementState extends State<PhotoManagement> {
                                 // 140.widthBox,
                                 Spacer(),
                                 IconButton(onPressed: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>PhotoGallery()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ScreenshotsGallery()));
                                 }, icon: Icon(Icons.arrow_forward_ios,color: Colors.black38,))
                               ],
                             ),
