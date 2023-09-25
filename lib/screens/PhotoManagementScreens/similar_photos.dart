@@ -130,7 +130,7 @@ class _PhotoGalleryState extends State<PhotoGallery> {
         iconTheme: const IconThemeData(
           color: Colors.black, // Change the color to your desired color
         ),
-        title: const Text('Screenshots',style: TextStyle(fontSize: 20,fontFamily: 'alk',fontWeight: FontWeight.bold,color: Colors.black),),
+        title: const Text('Simillar Photos Finder',style: TextStyle(fontSize: 20,fontFamily: 'alk',fontWeight: FontWeight.bold,color: Colors.black),),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),

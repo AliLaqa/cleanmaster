@@ -23,6 +23,54 @@ class _ScreenshotsGalleryState extends State<ScreenshotsGallery> {
     _loadPhotos();
   }
 
+
+
+  Future<void> _loadPhotos() async {
+    final statusStorage = await Permission.storage.request();
+    final result = await PhotoManager.requestPermissionExtend();
+    if (result.hasAccess && statusStorage.isGranted) {
+      final albums = await PhotoManager.getAssetPathList(onlyAll: true);
+      final recentAlbum = albums.first;
+      final recentPhotos = await recentAlbum.getAssetListRange(
+        start: 0,
+        end: await recentAlbum.assetCountAsync,
+      );
+
+      // Filter out non-image assets
+      final imageAssets = recentPhotos.where((asset) =>
+      // asset.type == AssetType.image &&
+      //     asset.mimeType!.startsWith('image/'));
+      asset.mimeType!.startsWith('image/') &&
+          asset.title?.toLowerCase().contains('screenshot') == true);
+
+      setState(() {
+        _photos = imageAssets.toList();
+        _isLoading = false; // Mark loading as complete
+      });
+    } else {
+      print("Permissions Denied---------------------------->");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Permissions Denied"),
+            content: Text("To use this app, please grant permission to access storage, photos, and videos in settings."),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  // Open app settings
+                  await openAppSettings();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   void _deleteImage(int index) async {
     final asset = _photos[index];
     final file = await asset.file;
@@ -38,48 +86,10 @@ class _ScreenshotsGalleryState extends State<ScreenshotsGallery> {
           _photos.removeAt(index);
         });
       } else {
-
-        print('Permission denied to delete the image.');
+        print('Storage Permission denied therefore unable to delete the image, coming from _deleteImage Function.');
       }
     }
   }
-
-
-  Future<void> _loadPhotos() async {
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess) {
-      final albums = await PhotoManager.getAssetPathList(onlyAll: true);
-      final recentAlbum = albums.first;
-      final recentPhotos = await recentAlbum.getAssetListRange(
-        start: 0,
-        end: await recentAlbum.assetCountAsync,
-      );
-
-      // Filter out non-image assets
-      final imageAssets = recentPhotos.where((asset) =>
-      asset.type == AssetType.image &&
-          asset.mimeType!.startsWith('image/') &&
-          asset.title?.toLowerCase().contains('screenshot') == true);
-
-      setState(() {
-        _photos = imageAssets.toList();
-        _isLoading = false; // Mark loading as complete
-      });
-    }
-  }
-
-  // void _deleteImage(int index) async {
-  //   final asset = _photos[index];
-  //   final file = await asset.file;
-  //
-  //   if (file != null && await file.exists()) {
-  //     await file.delete(); // This will delete the image from the phone
-  //   }
-  //
-  //   setState(() {
-  //     _photos.removeAt(index);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

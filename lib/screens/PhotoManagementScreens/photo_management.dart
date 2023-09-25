@@ -3,6 +3,7 @@ import 'package:clean_master/screens/PhotoManagementScreens/screenshots_gallery.
 import 'package:clean_master/screens/PhotoManagementScreens/similar_photos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -27,8 +28,9 @@ class _PhotoManagementState extends State<PhotoManagement> {
   }
 
   Future<void> _loadPhotos1() async {
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.hasAccess) {
+    final statusStorage = await Permission.storage.request();
+      final result = await PhotoManager.requestPermissionExtend();
+    if (result.hasAccess && statusStorage.isGranted) {
       final albums = await PhotoManager.getAssetPathList(onlyAll: true);
       final recentAlbum = albums.first;
       final recentPhotos = await recentAlbum.getAssetListRange(
@@ -38,13 +40,36 @@ class _PhotoManagementState extends State<PhotoManagement> {
 
       // Filter out non-image assets
       final imageAssets = recentPhotos.where((asset) =>
-      asset.type == AssetType.image &&
-          asset.mimeType!.startsWith('image/'));
+      // asset.type == AssetType.image &&
+      //     asset.mimeType!.startsWith('image/'));
+      asset.mimeType!.startsWith('image/') &&
+          asset.title?.toLowerCase().contains('screenshot') == true);
 
       setState(() {
         _photos1 = imageAssets.toList();
         _isLoading = false; // Mark loading as complete
       });
+    } else {
+      print("Permissions Denied---------------------------->");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Permissions Denied"),
+            content: Text("To use this app, please grant permission to access storage, photos, and videos in settings."),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  // Open app settings
+                  await openAppSettings();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
   // List<AssetEntity> screenshotImages = [];
